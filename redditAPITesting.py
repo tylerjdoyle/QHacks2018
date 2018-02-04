@@ -1,6 +1,7 @@
 import praw
 import time
 
+import pandas
 
 reddit = praw.Reddit(client_id='YlK5VB78FlL0Ug',
                      client_secret='uooOaERWpsVBF6pG-aENhD0SfrU',
@@ -72,6 +73,101 @@ def getPosts(startTime, endTime):
         currentStart = currentEnd
         currentEnd += day
 
-getPosts(startJan, end)
+def get_posts(start_time, end_time):
+    
+    submission_scores = []
+    submission_titles = []
+    comment_scores = []
+    comment_bodies = []
+
+    subreddits = [None] * 3
+    
+    subreddits[0] = reddit.subreddit('Monero')
+    subreddits[1] = reddit.subreddit('BytecoinBCN')
+    subreddits[2] = reddit.subreddit('Electroneum')
+
+    day = 86400 # The number of seconds in a day.
+    
+    current_time = start_time
+
+    while (current_time < end_time):
+        
+        print(current_time)
+     
+        for subreddit in subreddits:
+            
+
+            submissions = list(subreddit.submissions(current_time, current_time + day))
+
+            end_submissions_loop = min(len(submissions), 10)
+            for i in range(0, end_submissions_loop):
+
+
+                comments = submissions[i].comments
+                
+                end_comments_loop = min(len(comments), 10)
+                for j in range(0, end_comments_loop):
+
+                    subreddit_titles.append(subreddit.title.encode("utf-8", errors="ignore"))
+                    submission_titles.append(submissions[i].title.encode("utf-8", errors="ignore"))
+                    comment_bodies.append(comments[j].body.encode("utf-8", errors="ignore"))
+            
+            time.sleep(5)
+            
+        #end day.
+        
+        dataframe = pandas.DataFrame()
+
+        dataframe['subreddit_titles'] = subreddit_titles
+        dataframe['submission_titles'] = submission_titles
+        dataframe['comment_bodies'] = comment_bodies
+        
+        dataframe.to_csv('subreddit_data.csv', index=False)
+        
+        current_time += day
+    
+#get_posts(startSept, end)
+
+def getMorePosts():
+
+    submission_titles = []
+    comment_bodies = []
+    
+    listing = [None]*3
+    subreddits[0] = reddit.subreddit('Monero')
+    subreddits[1] = reddit.subreddit('BytecoinBCN')
+    subreddits[2] = reddit.subreddit('Electroneum')
+    
+    currentTime = time.time()
+    startTime = currentTime - 600 #10 mins in past
+
+    for sub in listing:
+        
+        posts = sub.submissions(startTime, currentTime)
+        
+        for post in posts:
+
+            print(post.score, post.title.encode("utf-8", errors='ignore'))
+
+            comments = post.comments
+
+            for comment in comments:
+
+                submission_titles.append(sub.title.encode("utf-8", errors="ignore"))
+                comment_bodies.append(comment.body.encode("utf-8", errors="ignore"))
+
+
+    dataframe = pandas.DataFrame()
+    
+    dataframe['submission_titles'] = submission_titles
+    dataframe['comment_bodies'] = comment_bodies
+        
+    dataframe.to_csv('subreddit_data.csv', index=False)
+
+
+
+#getMorePosts()
+
+#getPosts(startJan, end)
 
 
