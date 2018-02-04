@@ -75,9 +75,8 @@ def getPosts(startTime, endTime):
 
 def get_posts(start_time, end_time):
     
-    submission_scores = []
+    subreddit_titles = []
     submission_titles = []
-    comment_scores = []
     comment_bodies = []
 
     subreddits = [None] * 3
@@ -112,7 +111,7 @@ def get_posts(start_time, end_time):
                     submission_titles.append(submissions[i].title.encode("utf-8", errors="ignore"))
                     comment_bodies.append(comments[j].body.encode("utf-8", errors="ignore"))
             
-            time.sleep(5)
+            time.sleep(7)
             
         #end day.
         
